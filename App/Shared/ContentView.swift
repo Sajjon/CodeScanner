@@ -12,7 +12,10 @@ struct ContentView: View {
 	@State var scannedContent = ""
     var body: some View {
 		VStack {
-			CodeScannerView(codeTypes: [.qr]) { result in
+			CodeScannerView(
+				codeTypes: [.qr],
+				preferPerformanceOverAccuracy: true
+			) { result in
 				switch result {
 				case .failure(let error):
 					self.scannedContent = "ERROR: \(error.localizedDescription)"

@@ -83,10 +83,16 @@ extension CodeScannerView {
 		var lastTime = Date(timeIntervalSince1970: 0)
 		
 		lazy var qrDetector: CIDetector = {
+			var options: [String: Any] = [:]
+			
+			if parent.preferPerformanceOverAccuracy {
+				options[CIDetectorAccuracyLow] = true
+			}
+			
 			guard let detector = CIDetector(
 				ofType: CIDetectorTypeQRCode,
 				context: nil,
-				options: nil
+				options: options.isEmpty ? nil : options
 			) else {
 				fatalError()
 			}

@@ -50,6 +50,7 @@ public protocol CodeScannerViewProtocol {
 		codeTypes: [AVMetadataObject.ObjectType],
 		scanMode: ScanMode,
 		scanInterval: Double,
+		preferPerformanceOverAccuracy: Bool,
 		showViewfinder: Bool,
 		simulatedData: String,
 		shouldVibrateOniOSAndFlashOnMacOSOnSuccess: Bool,
@@ -64,6 +65,7 @@ internal extension CodeScannerViewProtocol {
 	var codeTypes: [AVMetadataObject.ObjectType] { config.codeTypes }
 	var scanMode: ScanMode { config.scanMode }
 	var scanInterval: Double { config.scanInterval }
+	var preferPerformanceOverAccuracy: Bool { config.preferPerformanceOverAccuracy }
 	var showViewfinder: Bool { config.showViewfinder }
 	var simulatedData: String { config.simulatedData }
 	
@@ -81,6 +83,7 @@ public extension CodeScannerViewProtocol {
 		_ codeTypes: [AVMetadataObject.ObjectType],
 		scanMode: ScanMode = .once,
 		scanInterval: Double = 2.0,
+		preferPerformanceOverAccuracy: Bool = false,
 		showViewfinder: Bool = false,
 		simulatedData: String = "",
 		shouldVibrateOniOSAndFlashOnMacOSOnSuccess: Bool = true,
@@ -93,6 +96,7 @@ public extension CodeScannerViewProtocol {
 			codeTypes: codeTypes,
 			scanMode: scanMode,
 			scanInterval: scanInterval,
+			preferPerformanceOverAccuracy: preferPerformanceOverAccuracy,
 			showViewfinder: showViewfinder,
 			simulatedData: simulatedData,
 			shouldVibrateOniOSAndFlashOnMacOSOnSuccess: shouldVibrateOniOSAndFlashOnMacOSOnSuccess,
@@ -108,6 +112,7 @@ public struct CodeScannerConfig {
 	public let codeTypes: [AVMetadataObject.ObjectType]
 	public let scanMode: ScanMode
 	public let scanInterval: Double
+	public var preferPerformanceOverAccuracy: Bool
 	public let showViewfinder: Bool
 	public var simulatedData: String
 	public var shouldVibrateOniOSAndFlashOnMacOSOnSuccess: Bool
@@ -120,6 +125,7 @@ public struct CodeScannerConfig {
 		codeTypes: [AVMetadataObject.ObjectType],
 		scanMode: ScanMode = .once,
 		scanInterval: Double = 2.0,
+		preferPerformanceOverAccuracy: Bool = false,
 		showViewfinder: Bool = false,
 		simulatedData: String = "",
 		shouldVibrateOniOSAndFlashOnMacOSOnSuccess: Bool = true,
@@ -132,6 +138,7 @@ public struct CodeScannerConfig {
 		self.scanMode = scanMode
 		self.showViewfinder = showViewfinder
 		self.scanInterval = scanInterval
+		self.preferPerformanceOverAccuracy = preferPerformanceOverAccuracy
 		self.simulatedData = simulatedData
 		self.shouldVibrateOniOSAndFlashOnMacOSOnSuccess = shouldVibrateOniOSAndFlashOnMacOSOnSuccess
 		self.isTorchOn = isTorchOn
@@ -160,6 +167,7 @@ public struct CodeScannerView: CodeScannerViewProtocol, UIViewControllerRepresen
 		codeTypes: [AVMetadataObject.ObjectType],
 		scanMode: ScanMode = .once,
 		scanInterval: Double = 2.0,
+		preferPerformanceOverAccuracy: Bool = false,
 		showViewfinder: Bool = false,
 		simulatedData: String = "",
 		shouldVibrateOniOSAndFlashOnMacOSOnSuccess: Bool = true,
@@ -173,6 +181,7 @@ public struct CodeScannerView: CodeScannerViewProtocol, UIViewControllerRepresen
 				codeTypes: codeTypes,
 				scanMode: scanMode,
 				scanInterval: scanInterval,
+				preferPerformanceOverAccuracy: preferPerformanceOverAccuracy,
 				showViewfinder: showViewfinder,
 				simulatedData: simulatedData,
 				shouldVibrateOniOSAndFlashOnMacOSOnSuccess: shouldVibrateOniOSAndFlashOnMacOSOnSuccess,
@@ -231,6 +240,7 @@ public struct CodeScannerView: CodeScannerViewProtocol, NSViewControllerRepresen
 		codeTypes: [AVMetadataObject.ObjectType],
 		scanMode: ScanMode = .oncePerCode,
 		scanInterval: Double = 2.0,
+		preferPerformanceOverAccuracy: Bool = false,
 		showViewfinder: Bool = false,
 		simulatedData: String = "",
 		shouldVibrateOniOSAndFlashOnMacOSOnSuccess: Bool = true,
@@ -244,6 +254,7 @@ public struct CodeScannerView: CodeScannerViewProtocol, NSViewControllerRepresen
 				codeTypes: codeTypes,
 				scanMode: scanMode,
 				scanInterval: scanInterval,
+				preferPerformanceOverAccuracy: preferPerformanceOverAccuracy,
 				showViewfinder: showViewfinder,
 				simulatedData: simulatedData,
 				shouldVibrateOniOSAndFlashOnMacOSOnSuccess: shouldVibrateOniOSAndFlashOnMacOSOnSuccess,
