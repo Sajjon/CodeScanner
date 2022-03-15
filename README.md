@@ -34,7 +34,7 @@ You can provide a variety of extra customization options to `CodeScannerView` in
 - `scanInterval` controls how fast individual codes should be scanned when running in `.continuous` scan mode.
 - `showViewfinder` determines whether to show a box-like viewfinder over the UI. Default: false.
 - `simulatedData` allows you to provide some test data to use in Simulator, when real scanning isn’t available. Default: an empty string.
-- `shouldVibrateOnSuccess` allows you to determine whether device should vibrate when a code is found. Default: true.
+- `shouldVibrateOniOSAndFlashOnMacOSOnSuccess` allows you to determine whether device should vibrate when a code is found. Default: true.
 
 If you want to add UI customization, such as a dedicated Cancel button, you should wrap your `CodeScannerView` instance in a `NavigationView` and use a `toolbar()` modifier to add whatever buttons you want.
 

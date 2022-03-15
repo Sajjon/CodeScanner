@@ -7,14 +7,15 @@
 //
 
 import AVFoundation
+
+#if os(iOS)
 import UIKit
 
 extension CodeScannerView {
     
-    @available(macCatalyst 14.0, *)
-    public class ScannerViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+    public class ScannerViewControllerIos: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
         
-        var delegate: ScannerCoordinator?
+        var delegate: ScannerCoordinatorIos?
         private let showViewfinder: Bool
         
         private var isGalleryShowing: Bool = false {
@@ -298,3 +299,4 @@ extension CodeScannerView {
         
     }
 }
+#endif // os(iOS)

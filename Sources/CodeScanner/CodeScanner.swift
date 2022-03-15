@@ -44,68 +44,171 @@ public enum ScanMode {
     case continuous
 }
 
+public protocol CodeScannerViewProtocol {
+	var config: CodeScannerConfig { get }
+	init(
+		codeTypes: [AVMetadataObject.ObjectType],
+		scanMode: ScanMode,
+		scanInterval: Double,
+		showViewfinder: Bool,
+		simulatedData: String,
+		shouldVibrateOniOSAndFlashOnMacOSOnSuccess: Bool,
+		isTorchOn: Bool,
+		isGalleryPresented: Binding<Bool>,
+		videoCaptureDevice: AVCaptureDevice?,
+		completion: @escaping (Result<ScanResult, ScanError>) -> Void
+	)
+}
+
+internal extension CodeScannerViewProtocol {
+	var codeTypes: [AVMetadataObject.ObjectType] { config.codeTypes }
+	var scanMode: ScanMode { config.scanMode }
+	var scanInterval: Double { config.scanInterval }
+	var showViewfinder: Bool { config.showViewfinder }
+	var simulatedData: String { config.simulatedData }
+	
+	
+	var shouldVibrateOniOSAndFlashOnMacOSOnSuccess: Bool { config.shouldVibrateOniOSAndFlashOnMacOSOnSuccess }
+	
+	var isTorchOn: Bool { config.isTorchOn }
+	var isGalleryPresented: Binding<Bool> { config.isGalleryPresented }
+	var videoCaptureDevice: AVCaptureDevice? { config.videoCaptureDevice }
+	var completion: (Result<ScanResult, ScanError>) -> Void { config.completion }
+}
+
+public extension CodeScannerViewProtocol {
+	init(
+		_ codeTypes: [AVMetadataObject.ObjectType],
+		scanMode: ScanMode = .once,
+		scanInterval: Double = 2.0,
+		showViewfinder: Bool = false,
+		simulatedData: String = "",
+		shouldVibrateOniOSAndFlashOnMacOSOnSuccess: Bool = true,
+		isTorchOn: Bool = false,
+		isGalleryPresented: Binding<Bool> = .constant(false),
+		videoCaptureDevice: AVCaptureDevice? = AVCaptureDevice.default(for: .video),
+		completion: @escaping (Result<ScanResult, ScanError>) -> Void
+	) {
+		self.init(
+			codeTypes: codeTypes,
+			scanMode: scanMode,
+			scanInterval: scanInterval,
+			showViewfinder: showViewfinder,
+			simulatedData: simulatedData,
+			shouldVibrateOniOSAndFlashOnMacOSOnSuccess: shouldVibrateOniOSAndFlashOnMacOSOnSuccess,
+			isTorchOn: isTorchOn,
+			isGalleryPresented: isGalleryPresented,
+			videoCaptureDevice: videoCaptureDevice,
+			completion: completion
+		)
+	}
+}
+
+public struct CodeScannerConfig {
+	public let codeTypes: [AVMetadataObject.ObjectType]
+	public let scanMode: ScanMode
+	public let scanInterval: Double
+	public let showViewfinder: Bool
+	public var simulatedData: String
+	public var shouldVibrateOniOSAndFlashOnMacOSOnSuccess: Bool
+	public var isTorchOn: Bool
+	public var isGalleryPresented: Binding<Bool>
+	public var videoCaptureDevice: AVCaptureDevice?
+	public var completion: (Result<ScanResult, ScanError>) -> Void
+
+	public init(
+		codeTypes: [AVMetadataObject.ObjectType],
+		scanMode: ScanMode = .once,
+		scanInterval: Double = 2.0,
+		showViewfinder: Bool = false,
+		simulatedData: String = "",
+		shouldVibrateOniOSAndFlashOnMacOSOnSuccess: Bool = true,
+		isTorchOn: Bool = false,
+		isGalleryPresented: Binding<Bool> = .constant(false),
+		videoCaptureDevice: AVCaptureDevice? = AVCaptureDevice.default(for: .video),
+		completion: @escaping (Result<ScanResult, ScanError>) -> Void
+	) {
+		self.codeTypes = codeTypes
+		self.scanMode = scanMode
+		self.showViewfinder = showViewfinder
+		self.scanInterval = scanInterval
+		self.simulatedData = simulatedData
+		self.shouldVibrateOniOSAndFlashOnMacOSOnSuccess = shouldVibrateOniOSAndFlashOnMacOSOnSuccess
+		self.isTorchOn = isTorchOn
+		self.isGalleryPresented = isGalleryPresented
+		self.videoCaptureDevice = videoCaptureDevice
+		self.completion = completion
+	}
+
+}
+
+#if os(iOS)
+
 /// A SwiftUI view that is able to scan barcodes, QR codes, and more, and send back what was found.
 /// To use, set `codeTypes` to be an array of things to scan for, e.g. `[.qr]`, and set `completion` to
 /// a closure that will be called when scanning has finished. This will be sent the string that was detected or a `ScanError`.
 /// For testing inside the simulator, set the `simulatedData` property to some test data you want to send back.
-@available(macCatalyst 14.0, *)
-public struct CodeScannerView: UIViewControllerRepresentable {
-    
-    public let codeTypes: [AVMetadataObject.ObjectType]
-    public let scanMode: ScanMode
-    public let scanInterval: Double
-    public let showViewfinder: Bool
-    public var simulatedData = ""
-    public var shouldVibrateOnSuccess: Bool
-    public var isTorchOn: Bool
-    public var isGalleryPresented: Binding<Bool>
-    public var videoCaptureDevice: AVCaptureDevice?
-    public var completion: (Result<ScanResult, ScanError>) -> Void
+public struct CodeScannerView: CodeScannerViewProtocol, UIViewControllerRepresentable {
 
-    public init(
-        codeTypes: [AVMetadataObject.ObjectType],
-        scanMode: ScanMode = .once,
-        scanInterval: Double = 2.0,
-        showViewfinder: Bool = false,
-        simulatedData: String = "",
-        shouldVibrateOnSuccess: Bool = true,
-        isTorchOn: Bool = false,
-        isGalleryPresented: Binding<Bool> = .constant(false),
-        videoCaptureDevice: AVCaptureDevice? = AVCaptureDevice.default(for: .video),
-        completion: @escaping (Result<ScanResult, ScanError>) -> Void
-    ) {
-        self.codeTypes = codeTypes
-        self.scanMode = scanMode
-        self.showViewfinder = showViewfinder
-        self.scanInterval = scanInterval
-        self.simulatedData = simulatedData
-        self.shouldVibrateOnSuccess = shouldVibrateOnSuccess
-        self.isTorchOn = isTorchOn
-        self.isGalleryPresented = isGalleryPresented
-        self.videoCaptureDevice = videoCaptureDevice
-        self.completion = completion
+	public let config: CodeScannerConfig
+	
+	public init(config: CodeScannerConfig) {
+		self.config = config
+	}
+	
+	public init(
+		codeTypes: [AVMetadataObject.ObjectType],
+		scanMode: ScanMode = .once,
+		scanInterval: Double = 2.0,
+		showViewfinder: Bool = false,
+		simulatedData: String = "",
+		shouldVibrateOniOSAndFlashOnMacOSOnSuccess: Bool = true,
+		isTorchOn: Bool = false,
+		isGalleryPresented: Binding<Bool> = .constant(false),
+		videoCaptureDevice: AVCaptureDevice? = AVCaptureDevice.default(for: .video),
+		completion: @escaping (Result<ScanResult, ScanError>) -> Void
+	) {
+		self.init(
+			config: .init(
+				codeTypes: codeTypes,
+				scanMode: scanMode,
+				scanInterval: scanInterval,
+				showViewfinder: showViewfinder,
+				simulatedData: simulatedData,
+				shouldVibrateOniOSAndFlashOnMacOSOnSuccess: shouldVibrateOniOSAndFlashOnMacOSOnSuccess,
+				isTorchOn: isTorchOn,
+				isGalleryPresented: isGalleryPresented,
+				videoCaptureDevice: videoCaptureDevice,
+				completion: completion
+			)
+		)
+	}
+	
+	public typealias Coordinator = ScannerCoordinatorIos
+	public typealias UIViewControllerType = ScannerViewControllerIos
+  
+    public func makeCoordinator() -> Coordinator {
+		Coordinator(parent: self)
     }
 
-    public func makeCoordinator() -> ScannerCoordinator {
-        ScannerCoordinator(parent: self)
-    }
-
-    public func makeUIViewController(context: Context) -> ScannerViewController {
-        let viewController = ScannerViewController(showViewfinder: showViewfinder)
+    public func makeUIViewController(context: Context) -> UIViewControllerType {
+		let viewController = NSViewControllerType(
+			showViewfinder: config.showViewfinder
+		)
+		
         viewController.delegate = context.coordinator
         return viewController
     }
 
-    public func updateUIViewController(_ uiViewController: ScannerViewController, context: Context) {
+    public func updateUIViewController(_ uiViewController: UIViewControllerType, context: Context) {
         uiViewController.updateViewController(
-            isTorchOn: isTorchOn,
-            isGalleryPresented: isGalleryPresented.wrappedValue
+			isTorchOn: config.isTorchOn,
+			isGalleryPresented: config.isGalleryPresented.wrappedValue
         )
     }
     
 }
 
-@available(macCatalyst 14.0, *)
 struct CodeScannerView_Previews: PreviewProvider {
     static var previews: some View {
         CodeScannerView(codeTypes: [.qr]) { result in
@@ -113,3 +216,77 @@ struct CodeScannerView_Previews: PreviewProvider {
         }
     }
 }
+
+#elseif os(macOS)
+
+public struct CodeScannerView: CodeScannerViewProtocol, NSViewControllerRepresentable {
+
+	public let config: CodeScannerConfig
+	
+	public init(config: CodeScannerConfig) {
+		self.config = config
+	}
+	
+	public init(
+		codeTypes: [AVMetadataObject.ObjectType],
+		scanMode: ScanMode = .oncePerCode,
+		scanInterval: Double = 2.0,
+		showViewfinder: Bool = false,
+		simulatedData: String = "",
+		shouldVibrateOniOSAndFlashOnMacOSOnSuccess: Bool = true,
+		isTorchOn: Bool = false,
+		isGalleryPresented: Binding<Bool> = .constant(false),
+		videoCaptureDevice: AVCaptureDevice? = AVCaptureDevice.default(for: .video),
+		completion: @escaping (Result<ScanResult, ScanError>) -> Void
+	) {
+		self.init(
+			config: .init(
+				codeTypes: codeTypes,
+				scanMode: scanMode,
+				scanInterval: scanInterval,
+				showViewfinder: showViewfinder,
+				simulatedData: simulatedData,
+				shouldVibrateOniOSAndFlashOnMacOSOnSuccess: shouldVibrateOniOSAndFlashOnMacOSOnSuccess,
+				isTorchOn: isTorchOn,
+				isGalleryPresented: isGalleryPresented,
+				videoCaptureDevice: videoCaptureDevice,
+				completion: completion
+			)
+		)
+	}
+	
+	public func makeNSViewController(context: Context) -> NSViewControllerType {
+		let viewController = NSViewControllerType()
+		viewController.showViewfinder = config.showViewfinder
+		viewController.delegate = context.coordinator
+		return viewController
+	}
+
+	public func updateNSViewController(_ nsViewController: NSViewControllerType, context: Context) {
+		nsViewController.updateViewController(
+			isTorchOn: config.isTorchOn,
+			isGalleryPresented: config.isGalleryPresented.wrappedValue
+		)
+	}
+
+	public static func dismantleNSViewController(
+		_ nsViewController: NSViewControllerType,
+		coordinator: Coordinator
+	) {
+		fatalError()
+	}
+
+
+	public typealias Coordinator = ScannerCoordinatorMacOS
+	public typealias NSViewControllerType = ScannerViewControllerMacOS
+
+	public func makeCoordinator() -> Coordinator {
+		Coordinator(parent: self)
+	}
+
+	
+}
+
+
+
+#endif
