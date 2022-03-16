@@ -201,7 +201,7 @@ public struct CodeScannerView: CodeScannerViewProtocol, UIViewControllerRepresen
     }
 
     public func makeUIViewController(context: Context) -> UIViewControllerType {
-		let viewController = NSViewControllerType(
+		let viewController = UIViewControllerType(
 			showViewfinder: config.showViewfinder
 		)
 		
