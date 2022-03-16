@@ -95,12 +95,12 @@ extension CodeScannerView {
 			setupSubviews()
 		}
 		
-		public override func viewDidDisappear() {
-			super.viewDidDisappear()
-			
-			if captureSession!.isRunning == true {
+		public override func viewWillDisappear() {
+			super.viewWillDisappear()
+			previewLayer?.removeFromSuperlayer()
+			if captureSession?.isRunning == true {
 				DispatchQueue.global(qos: .userInitiated).async {
-					self.captureSession!.stopRunning()
+					self.captureSession?.stopRunning()
 				}
 			}
 		}
@@ -112,7 +112,9 @@ extension CodeScannerView {
 			}
 			
 			previewLayer!.videoGravity = .resizeAspectFill
-			view.layer!.addSublayer(previewLayer!)
+			if previewLayer?.superlayer == nil {
+				view.layer!.addSublayer(previewLayer!)
+			}
 			addviewfinder()
 
 			delegate?.reset()

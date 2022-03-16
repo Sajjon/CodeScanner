@@ -12,6 +12,9 @@ struct CodeScannerDemoApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
+			#if os(macOS)
+				.frame(minWidth: 800, maxWidth: .infinity, minHeight: 800, maxHeight: .infinity)
+			#endif // os(macOS)
         }
     }
 }
