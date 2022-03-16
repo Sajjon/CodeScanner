@@ -14,7 +14,8 @@ struct ContentView: View {
 		VStack {
 			CodeScannerView(
 				codeTypes: [.qr],
-				preferPerformanceOverAccuracy: true
+				preferPerformanceOverAccuracy: true,
+				showViewfinder: true
 			) { result in
 				switch result {
 				case .failure(let error):

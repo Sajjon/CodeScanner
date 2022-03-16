@@ -230,6 +230,9 @@ struct CodeScannerView_Previews: PreviewProvider {
 
 public struct CodeScannerView: CodeScannerViewProtocol, NSViewControllerRepresentable {
 
+	public typealias Coordinator = ScannerCoordinatorMacOS
+	public typealias NSViewControllerType = ScannerViewControllerMacOS
+	
 	public let config: CodeScannerConfig
 	
 	public init(config: CodeScannerConfig) {
@@ -279,25 +282,9 @@ public struct CodeScannerView: CodeScannerViewProtocol, NSViewControllerRepresen
 			isGalleryPresented: config.isGalleryPresented.wrappedValue
 		)
 	}
-
-	public static func dismantleNSViewController(
-		_ nsViewController: NSViewControllerType,
-		coordinator: Coordinator
-	) {
-		fatalError()
-	}
-
-
-	public typealias Coordinator = ScannerCoordinatorMacOS
-	public typealias NSViewControllerType = ScannerViewControllerMacOS
-
 	public func makeCoordinator() -> Coordinator {
 		Coordinator(parent: self)
 	}
-
-	
 }
-
-
 
 #endif

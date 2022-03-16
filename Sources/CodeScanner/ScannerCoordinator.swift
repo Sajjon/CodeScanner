@@ -150,8 +150,6 @@ extension CodeScannerView {
 					found(result)
 				}
 			}
-			
-
 		}
 		
 		func isPastScanInterval() -> Bool {
@@ -164,8 +162,6 @@ extension CodeScannerView {
 			if parent.shouldVibrateOniOSAndFlashOnMacOSOnSuccess {
 				AudioServicesPlaySystemSound(SystemSoundID(kSystemSoundID_FlashScreen))
 			}
-			
-			print("✅ Found QR code with content: \(result.string)")
 			
 			parent.completion(.success(result))
 		}
